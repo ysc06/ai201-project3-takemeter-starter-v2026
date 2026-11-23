@@ -236,7 +236,7 @@ Written before the baseline was run: the trained model will beat the zero-shot b
 | 1. Overall accuracy | ≥ 0.65 | 0.625 | 0.750 | 0.562 | MISSED |
 | 2. Per-label F1 (`analysis` ≥ 0.50; others ≥ 0.60) | see target | a 0.00 · h 0.56 · r 0.76 | a 0.00 · h 0.73 · r 0.90 | a 0.00 · h 0.61 · r 0.61 | MISSED |
 | 3. Every label 25–40% of labels.csv | 25–40% | a 16% · h 39% · r 44% | same file | same file | MISSED |
-| 4. Staff agreement | ≥ 0.70 | pending `staff_labels.csv` | — | — | PENDING |
+| 4. Staff agreement | ≥ 0.70 | 1.00 (30/30) | not seed-dependent | not seed-dependent | MET |
 | 5. Confident third beats unsure third by | ≥ 0.15 | +0.40 | +0.40 | +0.20 | MET |
 
 Macro F1 was 0.442 / 0.543 / 0.407. Accuracy spread across seeds is **0.19**, nearly twice the 10-point line where a dataset is too small or lopsided for a stable measure. All three runs were on Apple Silicon (`mps`, torch 2.14.1).
@@ -275,7 +275,7 @@ Seed 42 (the one section 7 prints):
 | 1 | Overall accuracy | ≥ 0.65 | MISSED | Seed 2024 (0.562) and seed 42 (0.625) are under; only seed 7 clears it. It has to hold on all three. |
 | 2 | Per-label F1 | `analysis` ≥ 0.50, others ≥ 0.60 | MISSED | `analysis` is 0.00 on every seed, against a 0.50 target. `hot_take` also misses on seed 42 (0.56). `reaction` clears 0.60 on all three. |
 | 3 | Balance | each label 25–40% | MISSED | `analysis` 16% and `reaction` 44%. This is a property of the file, so it's the same on every seed. |
-| 4 | Staff agreement | ≥ 0.70 | PENDING | Waiting on `data/staff_labels.csv` from the TF. |
+| 4 | Staff agreement | ≥ 0.70 | MET | 30/30 by `agreement.py`, including all 7 posts staff marked hard. The labeller here is Claude, the same one who pre-labelled `labels.csv`. |
 | 5 | Confidence gap | ≥ +0.15 | MET | +0.40, +0.40, +0.20. A generous reading is possible: each third is 10 posts, so seed 2024's gap is two posts. The model's mean confidence is also only 0.41–0.46 against 0.33 for a pure guess, so "confident" here means only slightly less unsure. |
 
 **Diagnoses**
@@ -291,7 +291,7 @@ Seed 42 (the one section 7 prints):
 
 **Criterion 2: `analysis` F1 is 0.00. Cause: too few examples, plus a model that barely trained.** `analysis` is 34 of 209 rows, about 24 in training and 5 in each test split. The model's `analysis` column is empty on all three seeds, so it isn't confusing `analysis` with something else, it has simply never learned to say it. Mean confidence sits at 0.41–0.46, barely above the 0.33 of a three-way guess. With 145 training posts, batch size 16 and 3 epochs, the model gets about 30 weight updates, which isn't enough to pull a minority label out of the majority ones. When `analysis` posts go wrong they go to `hot_take` (14 of 15). That is the pair my definitions separate by one thing only, whether a checkable fact is present.
 
-Is it a labelling problem instead? The agreement check is the evidence for that, and it's pending. One caution applies before it arrives: every row in `labels.csv` was pre-labelled by Claude, and so were my 30 staff labels. The agreement rate will measure how consistently *that* labeller applies a written rule, which is the right instrument for this dataset, but not a measure of my own labelling.
+Is it a labelling problem instead? The agreement check says probably not. The same labeller scored 30/30 against staff, including all 7 deliberately hard posts, so the boundary isn't being applied two different ways. What the check did show is that my `analysis` rule is looser than staff's: mine admits weak, decorative facts, theirs requires the fact to carry the argument. That makes `analysis` vs `hot_take` a **genuinely hard pair** in my taxonomy, on top of the thin label. Caveat: every row in `labels.csv` and all 30 staff labels were labelled by Claude, so this is evidence about that labeller, not about my own labelling.
 
 **Criterion 1: accuracy. Cause: mostly the same thin label.** The 5 `analysis` posts are guaranteed misses on every seed, which costs 0.16 of accuracy on 32 posts before anything else goes wrong. On the other 27 posts the model got 20, 24 and 18 right (0.74, 0.89, 0.67). The 0.19 spread across seeds says a 32-post test split is too small to measure this precisely.
 
@@ -309,7 +309,7 @@ Is it a labelling problem instead? The agreement check is the evidence for that,
 
 My 30 labels are in `my_staff_labels.csv`, saved before seeing the key. They were written by Claude under `data/staff_taxonomy.md`, and Claude also pre-labelled `labels.csv`, so this rate measures the labeller of my dataset.
 
-**Agreement rate:** ___ / 30 = ___% *(pending `data/staff_labels.csv`)*
+**Agreement rate:** 30 / 30 = 100%
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -318,40 +318,16 @@ My 30 labels are in `my_staff_labels.csv`, saved before seeing the key. They wer
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
+None. That includes all 7 posts staff marked `HARD` (sp_005, sp_010, sp_014, sp_019, sp_020, sp_028, sp_029). The two traps were labelled the way staff did. On sp_014 ("Times are down about 3% since the shoe rules changed, so obviously…") the number is decoration, so it's `hot_take`. On sp_028 ("Third DNF this year…") the count is something the writer reports about themselves, not argues from, so it's `reaction`.
 
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+**Was the set easy, or is the rule tight?** Partly easy. The 30 posts fall in clean blocks of ten per label, and most of the non-`HARD` posts sit far from any boundary. The 7 hard ones are the real test, and 7 of 7 is good evidence the labeller applies a written rule consistently. That labeller is Claude, which also pre-labelled every row of `labels.csv`.
 
 **What the pattern in my disagreements tells me:**
 
+There are no disagreements to sort into piles (a), (b) or (c). What the check does tell me comes from comparing the two rulebooks, and it matters for the diagnosis:
 
+1. **My labels are probably not inconsistent.** The same labeller applied a stricter written rule perfectly on the posts chosen to trip it up. So "I applied a boundary two ways" is the least likely cause of my `analysis` miss.
+2. **Staff rule 1 is stricter than my `analysis` rule.** Staff require the fact to be *load-bearing*. Mine says `analysis` means *supported, not well supported* (stress test, case #2). Under staff rules, some of my `analysis` rows would be `hot_take` with a number in them. "We blew out Detriot and the Rockets. We are rounding into contention mode" is one example. Those rows look almost exactly like `hot_take` posts, and that is the direction the model got wrong 14 times out of 15. My looser rule made `analysis` vs `hot_take` a genuinely hard pair for a model to learn: the only signal is "a fact is somewhere in the post," and it gets that signal from about 24 training examples.
 
 ---
 
