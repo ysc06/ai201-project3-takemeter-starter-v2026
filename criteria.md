@@ -53,61 +53,41 @@ whether you hit them:
 
 ## 1.
 
-<!-- Your criterion. It must name a number. -->
+Overall accuracy on the held-out test split is at least **0.65** on every one of the three seeds (42, 7, 2024).
 
-
-
-**Why this target:**
-
-
+**Why this target:** I plan to keep each label between 25% and 40% of the file, so always guessing the biggest label scores about 0.40. The test split is only about 30 posts, so each post is worth about 3 points of accuracy. 0.65 means getting about 20 of 30 right, which is clearly better than guessing without assuming a DistilBERT trained on about 140 posts will be great. It has to hold on the worst of three seeds, which is why it isn't 0.75.
 
 ---
 
 ## 2.
 
-<!-- Your criterion. -->
+Per-label F1 on the test split, every seed: `hot_take` and `reaction` at least **0.60**, `analysis` at least **0.50**.
 
-
-
-**Why this target:**
-
-
+**Why this target:** `analysis` will be my smallest label. In my reading it was only about 1 post in 8, so even with targeted collection I expect about 8 to 10 of them in the test split, and one post flipping moves its F1 by about 0.1. It also sits on my hardest boundary (a fact in a heated or joking post), so I expect the model to confuse it with `reaction`. The two bigger labels get the stricter bar.
 
 ---
 
 ## 3.
 
-<!-- Your criterion. -->
+In `labels.csv`, no label is more than **40%** of the rows and no label is less than **25%**.
 
-
-
-**Why this target:**
-
-
+**Why this target:** Left to natural rates, r/nba would give me mostly jokes and hype, with `analysis` around 12%. The course's 70% cap would allow a nearly empty label. 25% of 200 rows is 50 `analysis` posts, about 8 in the test split. The notebook calls that the minimum it can measure, so going lower would make criterion 2 untestable.
 
 ---
 
 ## 4.
 
-<!-- Your criterion. -->
+When I label the 30 staff posts under the staff taxonomy, `agreement.py` reports agreement of at least **0.70** (21 of 30).
 
-
-
-**Why this target:**
-
-
+**Why this target:** The staff set was built with deliberately ambiguous posts, and it uses someone else's wording, close to mine but not the same. Three labels by chance would agree about a third of the time. 21 of 30 says I apply a written rule consistently, and it allows for about one post in three being honestly arguable. Below that, I'd suspect my own 200 labels are inconsistent too.
 
 ---
 
 ## 5.
 
-<!-- Your criterion. -->
+On every seed, accuracy on the model's most confident third of test predictions is at least **0.15** higher than on its least confident third (`accuracy_most_confident_third` minus `accuracy_least_confident_third` in results.json).
 
-
-
-**Why this target:**
-
-
+**Why this target:** The use case is triage: trust the confident calls and check the unsure ones by hand. That only works if confidence means something. With about 10 posts per third, one post is 0.10, so 0.15 is the smallest gap that's more than a single lucky post. I expect unsure predictions to cluster on the `analysis`/`reaction` boundary.
 
 ---
 
