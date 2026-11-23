@@ -42,7 +42,7 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
-
+TakeMeter reads comments from r/nba, Reddit's main NBA discussion community, and sorts each one into `analysis`, `hot_take` or `reaction`. An `analysis` post backs a claim with a checkable fact. A `hot_take` argues, compares or predicts with nothing checkable behind it. A `reaction` is a cheer, vent or joke about the moment. The point is to separate the comments that bring evidence from the much larger volume of confident takes and noise. In my reading, about one post in eight was `analysis`.
 
 ---
 
@@ -109,19 +109,22 @@ The stress test that shaped these rules is in [label_stress_test.md](label_stres
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from:** Comments copied by hand from three public r/nba threads in November 2026: a Heat discussion thread after their early-season turnaround, the Knicks–Raptors post-game and late-game thread (a close game decided by a disputed flagrant foul), and a thread about Klay Thompson's preseason shooting (7/26 FG, 3/20 from three). The Klay thread was chosen on purpose because the first two were short on `analysis`. A script (`tools/parse_reddit_paste.py`) strips usernames, timestamps, flair and buttons, and keeps every post whole. Usernames are not stored in the repo.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+279 posts were collected. 70 were left out as out of scope, each with its reason in `excluded_posts.csv`: replies that mean nothing without the comment above them, questions, posts about the subreddit or other fans, a chain of song-lyric quotes, NFL talk and one near-duplicate. That leaves 209 rows.
+
+**How I labelled them:** Every row was pre-labelled by Claude using the definitions and decision rules above. The note column says so on every row, and marks 22 rows `HARD` with the reason. **I did not do the 20-post cold pass**, so no rows are marked `cold`. 20 randomly drawn posts are in `cold_labels.csv`, still unlabelled. I have also not yet read and corrected every pre-label. Until I do, these labels measure Claude's reading of my rules, not mine.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `analysis` | 34 | 16% |
+| `hot_take` | 82 | 39% |
+| `reaction` | 93 | 44% |
+| **Total** | 209 | 100% |
+
+`analysis` is below the 25% floor in my criterion 3. I left it there rather than inventing posts or cutting real ones to hit the number. Even the stats thread was only about 30% `analysis`, which is itself a finding about this community.
 
 **Three hard cases**
 
@@ -129,25 +132,25 @@ Say so plainly — the disclosure is required, not penalised. -->
      been, and what you chose. These are worth more than the easy 190. -->
 
 **1.**
-> *The post:*
+> *The post:* "It's only the preseason, but 3/20 is crazy from arguably the 2nd best shooter of all time"
 >
-> *Could have been:*
+> *Could have been:* `analysis` or `reaction`
 >
-> *I chose, because:*
+> *I chose, because:* `reaction`. The stat is real, but the post only reacts to it ("crazy"). It doesn't use the number to argue anything beyond the number. This is the same call as "70 total FTs is crazy work" from my reading.
 
 **2.**
-> *The post:*
+> *The post:* "Anyone remember that time the Knicks fleeced the Raptors in a trade and then curb stomped them 15 times in a row?"
 >
-> *Could have been:*
+> *Could have been:* `reaction` or `analysis`
 >
-> *I chose, because:*
+> *I chose, because:* `analysis`. It reads like trash talk, but "fleeced" is a claim and the 15-game streak is a checkable fact offered for it. My rule says tone never decides.
 
 **3.**
-> *The post:*
+> *The post:* "Knicks would've won regardless but cmon man no way you think someone should get a flagrant for standing still while contesting"
 >
-> *Could have been:*
+> *Could have been:* `analysis` or `hot_take`
 >
-> *I chose, because:*
+> *I chose, because:* `hot_take`. "Standing still" sounds like a fact, but it's a description of a disputed play: in the same thread, fans watching the same replay said he moved his foot. A checkable fact has to be something two people looking it up would agree on.
 
 ---
 
@@ -155,17 +158,13 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** `distilbert-base-uncased`
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Settings:** 3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42. Trained on Apple Silicon (`mps`, torch 2.14.1), which `results.json` records.
 
-**Anything I changed from the defaults, and why:**
+**Anything I changed from the defaults, and why:** Nothing.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
-
-
+**Split sizes:** 145 train / 32 val / 32 test. The test split has 5 `analysis`, 13 `hot_take` and 14 `reaction`. **`analysis` has fewer than 8 test examples**, so its per-label score is decided by a handful of posts and will swing between seeds. That traces straight back to it being 16% of the file.
 
 ---
 
@@ -178,19 +177,21 @@ of next unit's variance. -->
      workflow and disclosing it costs you nothing. Not disclosing it is the
      problem. -->
 
+Most of this unit was done by Claude, at my request. Claude drafted the Milestone 1 reading notes from posts I pasted, and wrote the label definitions, the decision rules, all five criteria in `criteria.md`, the stress test, the parsing scripts and most of this README. I copied the Reddit threads myself and ran the notebook myself.
+
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Eight posts written to sit on the label boundaries, then classified with the definitions (`label_stress_test.md`).
+- *What came back:* Four of the eight didn't classify cleanly, for example "Wemby 8 blocks tonight. DPOY is already locked." and "LMAO the Celtics blew a 22 point lead again, this team is cooked".
+- *What I changed:* `analysis` now means *supported*, not *well supported*. Tone never decides. Lineups, injuries and quotes count as facts. An "X since Y" post is `analysis` only when Y is a basketball cause.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Pre-labels for the Knicks–Raptors thread.
+- *What came back:* Ref complaints like "Refs totally ruined the game" and hype like "This team is clutch asff" fit both `hot_take` and `reaction` as the definitions were first written.
+- *What I changed:* I added a second decision rule. A bare verdict about the moment is `reaction`, and a reason, comparison, ranking or prediction makes it `hot_take`. I updated the `hot_take` and `reaction` definitions here and in `label_definitions.txt` to match.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** All 209 labels in `labels.csv` are Claude's pre-labels, and every row's note says so. I did not do the 20-post cold pass. I have not yet read and corrected each pre-label.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
