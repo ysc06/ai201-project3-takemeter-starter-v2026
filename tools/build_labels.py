@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild labels.csv from raw_posts.txt + tools/prelabels.csv.
+"""Rebuild labels.csv from raw_posts*.txt + tools/prelabels.csv.
 
     python tools/build_labels.py
 
@@ -8,9 +8,10 @@ no prelabel yet are listed so they can be labelled. Prints label counts.
 """
 import csv, collections, sys
 sys.path.insert(0, "tools")
-from parse_reddit_paste import parse
+import glob
+from parse_reddit_paste import parse_any
 
-posts = parse(open("raw_posts.txt", encoding="utf-8"))
+posts = [p for f in sorted(glob.glob("raw_posts*.txt")) for p in parse_any(f)]
 pre = {r["comment_id"]: r for r in csv.DictReader(open("tools/prelabels.csv", encoding="utf-8"))}
 keep, out, todo, seen = [], [], [], set()
 for p in posts:

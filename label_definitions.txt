@@ -1,8 +1,8 @@
 # Your label definitions, one per line, as `label: definition`.
 #
+
 # Copied from the README so the baseline is judged on exactly these definitions.
 # baseline.py reads this file.
-
 analysis: a claim about basketball backed by at least one specific, checkable fact (a stat, a record, a standing, a named result, a lineup or injury status, or a quote) offered as support for the claim
-hot_take: a confident claim about basketball (a verdict, ranking or prediction) stated with no checkable support; a reason with no fact behind it still counts as no support
-reaction: an immediate emotional or joking response to a game or moment (hype, rooting, sarcasm, a meme) that makes no claim beyond what just happened
+hot_take: a claim about basketball that goes past a bare verdict (it gives a reason, compares, ranks or predicts) but offers no checkable fact behind it
+reaction: an immediate cheer, vent, joke or bare verdict about the game or moment, with no reason, comparison or prediction attached

@@ -66,7 +66,7 @@
 
 ### `hot_take`
 
-**Definition:** A confident claim about basketball (a verdict, ranking or prediction) stated with no checkable support; a reason alone, with no fact behind it, still counts as no support.
+**Definition:** A claim about basketball that goes past a bare verdict (it gives a reason, compares, ranks or predicts) but offers no checkable fact behind it.
 
 **Example 1:**
 > For real, i dont like the heat but i respect spo a TON! No way he doesn't adjust some stuff
@@ -76,7 +76,7 @@
 
 ### `reaction`
 
-**Definition:** An immediate emotional or joking response to a game or moment (hype, rooting, sarcasm, a meme) that makes no claim beyond what just happened.
+**Definition:** An immediate cheer, vent, joke or bare verdict about the game or moment ("refs are garbage", "Kat is that guy") with no reason, comparison or prediction attached.
 
 **Example 1:**
 > LFG KNICKS BABY!!!!!!!
@@ -96,6 +96,8 @@ Posts about the subreddit itself, the broadcast, the schedule or the mods, and r
 A fact makes a post `analysis` only if it supports a claim that goes past the fact itself: why something happened, what it means, or what comes next. A post that states a fact and only reacts to it ("crazy", "lmao", "GG") is `reaction`, and so is a number inside a joke with a non-basketball cause ("6-2 since fixing the Wade statue"). Tone never decides: "blew a 22 point lead again, this team is cooked" is `analysis`, because "cooked" is a claim and the blown lead supports it. `analysis` means supported, not right. A one-game stat behind a season-long claim still counts.
 
 Under this rule, "70 total FTs is crazy work" is `reaction`, and the Duren post is `analysis`, because it uses the missing player to explain the loss.
+
+**The second boundary, `hot_take` vs `reaction`**, showed up while labelling, not in the stress test. Ref complaints and hype like "Refs totally ruined the game" or "This team is clutch asff" fit both definitions as first written. The rule: a bare verdict shouted about the moment is `reaction`. Once it adds a reason ("That's not a foul. Where is jakobe supposed to put his feet."), a comparison, a ranking or a prediction ("Raps have no idea who to go to when they need a bucket. No closer."), it's `hot_take`. A description of a disputed play ("he was standing still") is a reason, not a checkable fact, because fans watching the same replay disagree on it.
 
 The stress test that shaped these rules is in [label_stress_test.md](label_stress_test.md).
 
