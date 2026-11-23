@@ -57,9 +57,9 @@ if __name__ == "__main__":
 
 # ── New-Reddit page format (no links; "•" and "5d ago" on their own lines) ──
 import hashlib
-AGO = re.compile(r"^(Edited )?\d+[smhdwy] ago$")
+AGO = re.compile(r"^(Edited )?\d+\s*(mo|min|hr|yr|[smhdwy])s? ago$")
 STOP = re.compile(r"^(View more comments|Community Info Section)$")
-SKIP_PLAIN = re.compile(r"^(u/\S+ avatar|\d+ more repl(y|ies)|Upvote|Downvote|Reply|Award|Share|-?\d+|•)$")
+SKIP_PLAIN = re.compile(r"^(u/\S+ avatar|\d+ more repl(y|ies)|Upvote|Downvote|Reply|Award|Share|-?\d+(\.\d+)?[kK]?|•)$")
 
 def text_id(text):
     return "t" + hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
@@ -71,12 +71,20 @@ def parse_plain(lines):
     def is_header(i):  # username, "•", "Nd ago"
         return i + 2 < n and S[i] and S[i + 1] == "•" and AGO.match(S[i + 2])
     posts, cur, i, head = [], [], 0, False
+    if "Comments Section" in S:          # skip the thread's own post, sort bar etc.
+        i = S.index("Comments Section") + 1
+    def is_ad(i):                        # promoted comment: name, "•", "Ad"
+        return i + 2 < n and S[i + 1] == "•" and S[i + 2] == "Ad"
     def flush():
         if cur:
             t = " / ".join(cur); posts.append({"comment_id": text_id(t), "text": t})
     while i < n:
         s = S[i]
         if STOP.match(s): break
+        if is_ad(i):                     # skip the ad up to the next real comment
+            flush(); cur = []; i += 3
+            while i < n and not is_header(i) and not STOP.match(S[i]): i += 1
+            continue
         if is_header(i):
             flush(); cur = []; i += 3
             while i + 1 < n and S[i] == "•" and AGO.match(S[i + 1]): i += 2
@@ -84,7 +92,8 @@ def parse_plain(lines):
         if s == "Upvote":
             flush(); cur = []; head = False; i += 1; continue
         if not s or SKIP_PLAIN.match(s): i += 1; continue
-        if head and (s.startswith("emoji:") or s in TEAMS or FLAIR.match(s)
+        if head and (s.startswith(("emoji:", ":")) or s in TEAMS or FLAIR.match(s)
+                     or (len(s.split()) <= 3 and s.split()[-1] in TEAMS)
                      or s.startswith("Profile Badge") or s.endswith("Bandwagon")):
             i += 1; continue
         head = False; cur.append(s); i += 1
