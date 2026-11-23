@@ -216,6 +216,8 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
      prediction made afterwards isn't one. -->
 
+Written before the baseline was run: the trained model will beat the zero-shot baseline on `reaction`, because ref vents and hype are short, repetitive and well represented in training, but lose to it on `analysis`, which the trained model never predicted on any seed, while the baseline at least reads the phrase "checkable fact" in the definition.
+
 **What the gap actually means:**
 <!-- If the baseline matched your trained model, your fine-tuning added
      nothing — and that is a real finding, not a failure. Say it plainly. -->
@@ -231,27 +233,33 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.65 | 0.625 | 0.750 | 0.562 | MISSED |
+| 2. Per-label F1 (`analysis` ≥ 0.50; others ≥ 0.60) | see target | a 0.00 · h 0.56 · r 0.76 | a 0.00 · h 0.73 · r 0.90 | a 0.00 · h 0.61 · r 0.61 | MISSED |
+| 3. Every label 25–40% of labels.csv | 25–40% | a 16% · h 39% · r 44% | same file | same file | MISSED |
+| 4. Staff agreement | ≥ 0.70 | pending `staff_labels.csv` | — | — | PENDING |
+| 5. Confident third beats unsure third by | ≥ 0.15 | +0.40 | +0.40 | +0.20 | MET |
+
+Macro F1 was 0.442 / 0.543 / 0.407. Accuracy spread across seeds is **0.19**, nearly twice the 10-point line where a dataset is too small or lopsided for a stable measure. All three runs were on Apple Silicon (`mps`, torch 2.14.1).
 
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
+Seed 42 (the one section 7 prints):
+
+| true \ predicted | analysis | hot_take | reaction |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **analysis** | 0 | 4 | 1 |
+| **hot_take** | 0 | 7 | 6 |
+| **reaction** | 0 | 1 | 13 |
 
 **My biggest off-diagonal number, and what it means:**
 <!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
      direction. "7 real analysis posts were called hot_take and only 3 went the
      other way" is a direction, not just an error rate. -->
+
+6 real `hot_take` posts were called `reaction`, and only 1 went the other way. On this seed the model treats any short opinion about the game as a vent, so it hasn't learned my second rule (a reason or comparison makes it a `hot_take`). The bigger story is the empty first column: the model never predicted `analysis` on any seed. Across all three seeds, 14 of the 15 real `analysis` posts were called `hot_take`.
 
 
 
@@ -264,11 +272,11 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.65 | MISSED | Seed 2024 (0.562) and seed 42 (0.625) are under; only seed 7 clears it. It has to hold on all three. |
+| 2 | Per-label F1 | `analysis` ≥ 0.50, others ≥ 0.60 | MISSED | `analysis` is 0.00 on every seed, against a 0.50 target. `hot_take` also misses on seed 42 (0.56). `reaction` clears 0.60 on all three. |
+| 3 | Balance | each label 25–40% | MISSED | `analysis` 16% and `reaction` 44%. This is a property of the file, so it's the same on every seed. |
+| 4 | Staff agreement | ≥ 0.70 | PENDING | Waiting on `data/staff_labels.csv` from the TF. |
+| 5 | Confidence gap | ≥ +0.15 | MET | +0.40, +0.40, +0.20. A generous reading is possible: each third is 10 posts, so seed 2024's gap is two posts. The model's mean confidence is also only 0.41–0.46 against 0.33 for a pure guess, so "confident" here means only slightly less unsure. |
 
 **Diagnoses**
 
@@ -281,7 +289,13 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
      have that can tell a LABELLING problem from a MODEL problem, and this
      section is graded on whether you used it that way. -->
 
+**Criterion 2: `analysis` F1 is 0.00. Cause: too few examples, plus a model that barely trained.** `analysis` is 34 of 209 rows, about 24 in training and 5 in each test split. The model's `analysis` column is empty on all three seeds, so it isn't confusing `analysis` with something else, it has simply never learned to say it. Mean confidence sits at 0.41–0.46, barely above the 0.33 of a three-way guess. With 145 training posts, batch size 16 and 3 epochs, the model gets about 30 weight updates, which isn't enough to pull a minority label out of the majority ones. When `analysis` posts go wrong they go to `hot_take` (14 of 15). That is the pair my definitions separate by one thing only, whether a checkable fact is present.
 
+Is it a labelling problem instead? The agreement check is the evidence for that, and it's pending. One caution applies before it arrives: every row in `labels.csv` was pre-labelled by Claude, and so were my 30 staff labels. The agreement rate will measure how consistently *that* labeller applies a written rule, which is the right instrument for this dataset, but not a measure of my own labelling.
+
+**Criterion 1: accuracy. Cause: mostly the same thin label.** The 5 `analysis` posts are guaranteed misses on every seed, which costs 0.16 of accuracy on 32 posts before anything else goes wrong. On the other 27 posts the model got 20, 24 and 18 right (0.74, 0.89, 0.67). The 0.19 spread across seeds says a 32-post test split is too small to measure this precisely.
+
+**Criterion 3: balance. Cause: collection, not the model.** r/nba's natural rate of `analysis` is low. Even the stats thread I chose to fix it was about 30% `analysis`. I didn't trim real posts or invent new ones to hit the number.
 
 ---
 
@@ -293,7 +307,9 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+My 30 labels are in `my_staff_labels.csv`, saved before seeing the key. They were written by Claude under `data/staff_taxonomy.md`, and Claude also pre-labelled `labels.csv`, so this rate measures the labeller of my dataset.
+
+**Agreement rate:** ___ / 30 = ___% *(pending `data/staff_labels.csv`)*
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
