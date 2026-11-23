@@ -205,12 +205,15 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
 <!-- Both models on the same posts. `python baseline.py --trained results.json`
      prints this table for you. -->
 
-| Measure | Baseline | Trained | Difference |
-|---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+Same 32 held-out posts (`test_split.csv`, seed 42). The baseline is `facebook/bart-large-mnli`, zero-shot. Trained is the Unit 5 model.
+
+| Measure | Baseline (my definitions) | Baseline (bare label names) | Trained | Trained − baseline (definitions) |
+|---|---|---|---|---|
+| Overall accuracy | 0.156 | 0.500 | 0.625 | +0.469 |
+| Macro F1 | 0.093 | 0.368 | 0.442 | +0.349 |
+| F1 — `analysis` | 0.278 | 0.000 | 0.000 | −0.278 |
+| F1 — `hot_take` | 0.000 | 0.533 | 0.560 | +0.560 |
+| F1 — `reaction` | 0.000 | 0.571 | 0.765 | +0.765 |
 
 **What I predicted before I looked:**
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
@@ -221,6 +224,10 @@ Written before the baseline was run: the trained model will beat the zero-shot b
 **What the gap actually means:**
 <!-- If the baseline matched your trained model, your fine-tuning added
      nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+**My definitions made the baseline worse, not better.** With them, the zero-shot model called 31 of 32 posts `analysis`. With bare label names it spread its guesses and scored 0.50, so my definitions were worth **−0.34 accuracy** to it. My read: the `analysis` definition is the longest and most argument-shaped hypothesis, so almost any post entails it more than the others. The baseline's 0.278 `analysis` F1 is that same guess-everything pattern catching all 5 `analysis` posts, not skill.
+
+The fairer opponent is the bare-names run, and the trained model still beats it: +0.125 accuracy and +0.074 macro F1, with the gain on `reaction` and `hot_take`. My prediction was half right. The trained model did win on `reaction`. It "lost" on `analysis` only on paper, because neither the trained model nor the stronger baseline got a single `analysis` post right. So fine-tuning added something on the two big labels and nothing on the one that matters most.
 
 
 

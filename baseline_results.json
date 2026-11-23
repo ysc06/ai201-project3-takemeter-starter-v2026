@@ -1,0 +1,194 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 32,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": true,
+  "scores": {
+    "n": 32,
+    "accuracy": 0.15625,
+    "f1_macro": 0.09259259259259257,
+    "per_label": {
+      "analysis": {
+        "precision": 0.16129032258064516,
+        "recall": 1.0,
+        "f1": 0.27777777777777773,
+        "support": 5
+      },
+      "hot_take": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "reaction": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 14
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "og smile?!?!",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Review it and call another flagrant",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I am frankly surprised it's a heat fan posting this lol. Klay always has a cold start to the season, plus if you have seen any of our games, they never leave Klay open, he could have gone 0/20 but he is still of value with his gravity creating space. He has been amazing on D as well defending the 4 with Wiggins taking the tougher assignment. He has been pulling stocks. To all the people suggesting he doesn't care, he is drowning in the luxuries of Miami, you don't pass our physical conditioning doing all that. Klay will definitely come clutch playoff time, I personally see him play more minutes. Is he at his prime? No / Do we need him at his prime? No / He is the equivalent of Antoine Walker in our first ring, the Ray Allen in the third ring. He will swing a couple games in the playoffs for us.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Mikal is awakening",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Same ref that called KAT 5 seconds after the play a few minutes ago. I think it's past their bedtime.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The shot is still there. He just needs to realize all those injuries caught up with him and to use his energy to steer his man into Giannis or Bam on D and to spot up. He doesn\u2019t have that that pull up that was so deadly anymore",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "i know these type of fouls are to \"protect the shooter\" but man, I find it extremely hard to defend. / This helps the knicks but I still think they went overboard. / It is pretty much a rule in which it is telling you to evade even being in front of the player.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I mean that was a flagrant foul... Easy 6 point possession for the knicks lol",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Post injury? He was 5/36 to start the '18 season before he made 14 in a game to set the record which stands till this day.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I dont think its possible to even a beat a fully healthy team at this point because nobody is healthy lol.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Klay has been struggling since he was in GSW. Hes now in MIA with all those bad Latinas and his boat\u2026 homie don\u2019t give af about 3p%",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "ray allen balled til the end, what is wrong with klay?",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Im a knicks fan, wasn\u2019t a bad closeout but they\u2019re gonna call that every time",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Nothing new here. Just getting owned by Knicks.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "He already was a net negative on the floor in Dallas. One of the worst defenders in the league, can\u2019t do anything on offense than shoot threes slightly better than league average",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "The past two seasons in Dallas Klay shot in the high 30\u2019s from 3 on volume. Him spacing the floor is going to be integral to Giannis doing his thing offensively. Even if he\u2019s cooked, there\u2019s no way Klay\u2019s man is leaving him to double team Giannis",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I don\u2019t what it is but Klay would look like a dead fish vs the whole league and then turn into Michael Jordan vs my Nets. He had his best game this preseason, hitting 2 of those 3 made 3s vs The Nets. When he was with The Mavs he turned the clock back to Old Klay vs us.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Warriors only good move within the last half decade was getting off Klank Thompson at the right time",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "They played great and would've won had the refs made the right calls",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Movement shooting and pressure shooting get worse when you lose mobility. Stationary and touch shooting usually get better. Old heads at the park shoot well, but they tend not to take difficult shots.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Raptors might die tomorrow against the Wizards if this goes to OT again.",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Everyone\u2019s favorite 6\u20192 fraud steals the game again.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I remember Klay having slow starts to the season with us",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Bittersweet. I can't hate OG but please don't make threes against the Raptors.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "I don't think that was a flagrant not an offensive foul. Socks because this was shaking up for a great finish",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "GG lil bros",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "This game on some bullshit",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Lmao wtf refs",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Bro just kept shooting",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Man, I am glad to see RJ killing it in Toronto.",
+      "gold": "reaction",
+      "predicted": "analysis"
+    },
+    {
+      "text": "Outcoached? ingram and IQ being injured saved him. He would have played the 2 soft guys major minutes had they not went down on injury. / Btw Cavs still beat them handily in game 7 and it wasn't a particularly close game. / only reason it went to game 7 was because Barnes played out of his mind.",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "If Knicks didn\u2019t exist I\u2019d be a raps fan cannot lie",
+      "gold": "reaction",
+      "predicted": "analysis"
+    }
+  ]
+}
