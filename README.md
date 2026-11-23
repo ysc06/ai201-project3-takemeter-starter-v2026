@@ -191,6 +191,14 @@ Most of this unit was done by Claude, at my request. Claude drafted the Mileston
 - *What came back:* Ref complaints like "Refs totally ruined the game" and hype like "This team is clutch asff" fit both `hot_take` and `reaction` as the definitions were first written.
 - *What I changed:* I added a second decision rule. A bare verdict about the moment is `reaction`, and a reason, comparison, ranking or prediction makes it `hot_take`. I updated the `hot_take` and `reaction` definitions here and in `label_definitions.txt` to match.
 
+**Moment 3 (Unit 6)**
+
+- *What I asked for:* Claude ran the comparisons, read the three-seed results, labelled the 30 staff posts and wrote the Unit 6 sections of this README.
+- *What came back:* The diagnosis that the model was undertrained, read from near-uniform confidence. It also found that my definitions made the zero-shot baseline worse (−0.34), and that staff rule 1 is stricter than my `analysis` rule.
+- *What I changed:* I trained for 10 epochs instead of 3, the one Unit 6 change. I ran the notebook and the baseline on my own machine.
+
+The 30 staff labels in `my_staff_labels.csv` are Claude's, saved before `staff_labels.csv` was opened.
+
 **Pre-labelling disclosure:** All 209 labels in `labels.csv` are Claude's pre-labels, and every row's note says so. I did not do the 20-post cold pass. I have not yet read and corrected each pre-label.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
@@ -340,40 +348,51 @@ There are no disagreements to sort into piles (a), (b) or (c). What the check do
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** One training setting: `EPOCHS` from 3 to 10. The data, labels, split seeds, learning rate and batch size are all the same. `RUN_LABEL` was set to `"after"`, so the before numbers stayed untouched.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** Criterion 2. The model never predicted `analysis`, and its mean confidence was 0.41–0.46 against 0.33 for a pure guess, after only about 30 weight updates. That reads as undertrained, not confused. The agreement check (30/30) made a labelling fix the less likely win. More `analysis` examples was the other candidate, but that needs new collection. Training longer tests the undertraining reading directly.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.65 | 0.781 | 0.812 | 0.656 | MET |
+| 2. Per-label F1 (`analysis` ≥ 0.50; others ≥ 0.60) | see target | a 0.73 · h 0.77 · r 0.81 | a 0.33 · h 0.80 · r 0.93 | a 0.25 · h 0.67 · r 0.77 | MISSED |
+| 3. Every label 25–40% of labels.csv | 25–40% | a 16% · h 39% · r 44% | same file | same file | MISSED |
+| 4. Staff agreement | ≥ 0.70 | 1.00 (30/30) | not seed-dependent | not seed-dependent | MET |
+| 5. Confident third beats unsure third by | ≥ 0.15 | +0.30 | +0.20 | −0.10 | MISSED |
 
-**Did it help, and how do I know:**
+Macro F1 was 0.770 / 0.687 / 0.562, up from 0.442 / 0.543 / 0.407. The accuracy spread is 0.156, down from 0.188 but still over the 10-point line.
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+Seed 42 confusion matrix, after:
 
+| true \ predicted | analysis | hot_take | reaction |
+|---|---|---|---|
+| **analysis** | 4 | 0 | 1 |
+| **hot_take** | 2 | 10 | 1 |
+| **reaction** | 0 | 3 | 11 |
 
+**Did it help, and how do I know:** Yes on accuracy, partly on `analysis`, and it broke confidence.
+
+- **Accuracy rose on every seed** (+0.16, +0.06, +0.09), enough to turn criterion 1 from MISSED to MET.
+- **The model now predicts `analysis` at all.** It caught 4 of 5 on seed 42, but only 1 of 5 on seeds 7 and 2024. On those seeds the other 4 still went to `hot_take`, the same direction as before. With 5 test posts, one post moves `analysis` F1 by roughly 0.15–0.2, so the seed 42 number is partly a friendly draw.
+- **Criterion 5 went from MET to MISSED.** Mean confidence rose from about 0.44 to about 0.70, so the model is now sure of itself. But on seed 2024 its wrong guesses were *more* confident than its right ones (0.65 vs 0.62), and its most confident third was less accurate than its least confident third. Training longer made it confident faster than it made it right. That is a mild overfitting signal on 145 training posts.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+**Criterion 2, `analysis` F1 (0.73 / 0.33 / 0.25).** What I'd do: collect about 30 more `analysis` posts from stat-argument threads, which would also fix criterion 3. Then consider tightening my rule to staff's, so a fact counts only when the argument rests on it. That would make `analysis` posts look less like `hot_take` posts with a number added. Why I stopped: both need new collection or relabelling, and the unit asks for one change.
 
+**Criterion 3, balance (`analysis` 16%).** This is the same fix as criterion 2: more real `analysis` posts. I didn't invent posts or cut real ones to reach the number.
 
+**Criterion 5, confidence (−0.10 on seed 2024).** What I'd do: try a middle setting (5–6 epochs), or keep the best checkpoint by validation loss instead of the last one. Why I stopped: that would be a second training change, and it would mix up which change did what.
 
 **The gap between what I meant my labels to capture and what the model
 learned:**
 <!-- Two sentences. Your confusion matrix is the evidence. -->
 
-
+I meant `analysis` to mean "a claim with a checkable fact behind it". The model learned something closer to "a long post with numbers in it", so on two of three seeds, 4 of 5 `analysis` posts still went to `hot_take`, while short stat jokes stayed `reaction`. It learned the easy surface boundary (short vent vs. longer argument) well, but not the one my taxonomy rests on: whether the fact is doing any work.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
