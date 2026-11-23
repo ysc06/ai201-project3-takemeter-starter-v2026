@@ -54,34 +54,50 @@
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `analysis`
 
-**Definition:**
-
-**Example 1:**
->
-
-**Example 2:**
->
-
-### `label_two`
-
-**Definition:**
+**Definition:** A claim about basketball backed by at least one specific, checkable fact (a stat, a record, a standing, a named result, a lineup or injury status, or a quote) offered as support for the claim.
 
 **Example 1:**
->
+> Absolutely hilarious to me that Miami are now tied for fourth in the east after the entire internet said they were done one week into a six month long 82 game season.
 
 **Example 2:**
->
+> Good game, we are definitely missing Duren. Our paint defense is so weak right now, all we can do is foul lol
+
+### `hot_take`
+
+**Definition:** A confident claim about basketball (a verdict, ranking or prediction) stated with no checkable support; a reason alone, with no fact behind it, still counts as no support.
+
+**Example 1:**
+> For real, i dont like the heat but i respect spo a TON! No way he doesn't adjust some stuff
+
+**Example 2:**
+> Giannis looking quite smart and great on defense, contrary to everything the idiots on this sub have been saying. No one feels embarassed to side with Glenn Rivers?
+
+### `reaction`
+
+**Definition:** An immediate emotional or joking response to a game or moment (hype, rooting, sarcasm, a meme) that makes no claim beyond what just happened.
+
+**Example 1:**
+> LFG KNICKS BABY!!!!!!!
+
+**Example 2:**
+> Heat Culture is back baby
+
+### Out of scope
+
+Posts about the subreddit itself, the broadcast, the schedule or the mods, and replies that mean nothing without the comment above them (like "7-2*" or "I feel the same about Mazzulla."), are not collected. They were about a third of my reading, and the model only ever sees one post at a time.
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `analysis` and `reaction`. A post quotes a real number in an excited or joking tone, for example "70 total FTs is crazy work. GG Pistons I hope next time we see each other both teams are fully healthy."
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+A fact makes a post `analysis` only if it supports a claim that goes past the fact itself: why something happened, what it means, or what comes next. A post that states a fact and only reacts to it ("crazy", "lmao", "GG") is `reaction`, and so is a number inside a joke with a non-basketball cause ("6-2 since fixing the Wade statue"). Tone never decides: "blew a 22 point lead again, this team is cooked" is `analysis`, because "cooked" is a claim and the blown lead supports it. `analysis` means supported, not right. A one-game stat behind a season-long claim still counts.
 
+Under this rule, "70 total FTs is crazy work" is `reaction`, and the Duren post is `analysis`, because it uses the missing player to explain the loss.
+
+The stress test that shaped these rules is in [label_stress_test.md](label_stress_test.md).
 
 
 ---
